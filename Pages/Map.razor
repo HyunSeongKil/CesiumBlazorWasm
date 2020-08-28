@@ -1,0 +1,49 @@
+﻿@page "/map"
+@inject IJSRuntime JsRuntime
+
+
+<h1>Hello Cesium(feat. Blazor)</h1>
+
+<ul>
+    <li><a @onclick="FlyTo" href="javascript:;" >세종시청으로 이동</a></li>
+    <li>
+        카메라 시점 조절
+        <input @onchange="LookAtTransform" type="range" min="500" max="15000" step="100" style="width:40%" />
+    </li>
+</ul>
+
+<div @ref="CesiumContainerReference" id="cesiumContainer" style="width:100%; height:100%"></div>
+
+
+
+@code {
+    ElementReference CesiumContainerReference;
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        System.Diagnostics.Debug.WriteLine("From Index.razor: " + DateTime.Now.ToString("mm:ss.fff"));
+        base.OnInitialized();
+
+        //
+        if (firstRender)
+        {
+            //
+            //InitCesium();
+            await JsRuntime.InvokeVoidAsync("initCesium", CesiumContainerReference);
+        }
+
+    }
+
+    async Task FlyTo()
+    {
+        //
+        JsRuntime.InvokeVoidAsync("flyTo", "127.2891", "36.4800");
+    }
+
+    async Task LookAtTransform(ChangeEventArgs e)
+    {
+        JsRuntime.InvokeVoidAsync("lookAtTransform", "127.2891", "36.4800", e.Value.ToString());
+    }
+
+}
